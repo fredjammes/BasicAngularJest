@@ -62,5 +62,16 @@ The following can be installed using the following command :
 `yarn add jest jest-preset-angular @types/jest @angular-builders/jest --dev`
 
 ---
+## 3. Configure Jest
+You must configure Jest itself :
+- Create a jest.config.js file.
+  - This file contains the preset we installed previously, so it can work with angular.
+  - It tells us where we should look for files to test, and the file name of our tests files
+  - It sets up the test coverage of our project
+- Create a tsconfig.spec.ts file.
+  - this is a specific typescript config file for our tests. Notice the "jest" value in the "types" array.
+  
 
-You can now go to the next section : git checkout 3-tsconfig-and-jest.config
+  
+
+You can now go to the next section : git checkout 4-configure-angular-cli-to-use-jest
