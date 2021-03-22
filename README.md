@@ -49,5 +49,18 @@ This command create a new Angular Application with the following flags :
 - --prefix baj : specify the prefix of the application (notably for selectors), you should use your own
 - --strict : set some config so the code must be of better quality, typescript-wise
 - --style scss : set scss instead of css
+---
+## 2. Add Jest packages and dependencies
+In order to install jest, you must install the following dependencies :
+- jest : the testing framework itself
+- jest-preset-angular : A preset of Jest configuration for Angular projects.
+- @types/jest : the Typescript types of Jest
+- @angular-builders/jest : a builder needed to be able to use angular CLI to run tests
 
-You can now go to the next section : git checkout 2-jest-packages-and-dependencies
+The following can be installed using the following command :
+
+`yarn add jest jest-preset-angular @types/jest @angular-builders/jest --dev`
+
+---
+
+You can now go to the next section : git checkout 3-tsconfig-and-jest.config
