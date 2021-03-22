@@ -107,7 +107,51 @@ Now you can change your package.json, adding scripts to run tests :
   ...
 }
 ```
-
+---
 ## You're now ready to write tests !
 
-You can now go to the next section : git checkout 5-Angular-first-test
+---
+
+## 5. Create your first tests
+
+### Jest basics
+Jest tests are divided into 2 main parts : 
+- Test suites are included in "describe" functions.
+- Tests are included in "it" or "test" functions.
+
+Test suites and tests functions have 3 parameters : 
+- a string that describe what the test or test suite does
+- a callback function that contains the test
+
+Usually, in the callback function, there should be at least one call of an expect function which is paired with comparison functions :
+- toBe
+- toStrictEquals
+- toBeTruthy
+- toBeFalse
+- toContain
+- ...
+
+Setup and teardown of the tests can be done with the following functions :
+- beforeEach
+- beforeAll
+- afterEach 
+- afterAll
+
+These all take a callback function, doing the setup or the teardown.
+These functions can be put directly on top of the file, or inside a describe function in order to be applied only in the scope of the test suite.
+---
+
+### Basic Angular example
+You can now check the app.component.spec.ts file. This file is prefixed with .spec.ts, which allow the framework to detect the test file in order to run it.
+
+This file includes basic tests Angular provides when you create an application on the AppComponent.
+
+Since we are testing a component, we create a test suite for the component, using the describe function.
+
+We give it a description, 'AppComponent' and an arrow function, in which we will include the setup and teardown for the suite,  and some test suites and tests.
+
+For the setup, we use the beforeEach function. In this function, we setup a simple TestingModule and compile its components, only the AppComponent as of this first test.
+
+By doing so, before every 'it' or 'test' function, we will do this testing module setup and compiling action, allowing us to have a fresh component before each test.
+
+You can now go to the next section : git checkout 6-simple-tests
