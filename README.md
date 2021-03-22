@@ -34,3 +34,20 @@ git checkout 6-simple-tests
 ```bash
 git checkout 7-asynchronous-tests
 ```
+
+## 1. Create an application with Angular CLI
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.2.2 using the following command :
+
+`ng new BasicAngularJest --minimal --package-manager yarn --prefix baj --strict --style scss`
+
+This command create a new Angular Application with the following flags :
+- --minimal : This indicates we want to have a very minimal application, meaning :
+    - No testing framework are added to the application
+    - Template and style of the main component are generated inline (you would erase the style and template anyway)
+    - No tslint.json (you should use eslint nowadays)
+- --package-manager yarn : This tells CLI to use Yarn to install npm packages
+- --prefix baj : specify the prefix of the application (notably for selectors), you should use your own
+- --strict : set some config so the code must be of better quality, typescript-wise
+- --style scss : set scss instead of css
+
+You can now go to the next section : git checkout 2-jest-packages-and-dependencies
