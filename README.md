@@ -1,27 +1,36 @@
 # BasicAngularJest
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.2.2.
+## Introduction
+This project introduce how to use Jest in an Angular project.
+The repository is made of branches that shows the state at each step.
+Every branch has an updated README.md describing each new step. Do not hesitate to read it !
 
-## Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Here is the content and the git command to go to a specific step : 
+- Creating an empty application without testing included
+```bash
+git checkout 1-application-creation
+```
+- Add Jest packages and dependencies
+```bash
+git checkout 2-jest-packages-and-dependencies
+```
+- Configure jest and typescript to make Jest work
+```bash
+git checkout 3-tsconfig-and-jest.config
+```
+- Configure Angular CLI to use jest when using ng test
+```bash
+git checkout 4-configure-angular-cli-to-use-jest
+```
+- Find out what a generated test from Angular CLI looks like and Jest basics
+```bash
+git checkout 5-Angular-first-test
+```
+- Create our own simple tests
+```bash
+git checkout 6-simple-tests
+```
+- Create asynchronous tests
+```bash
+git checkout 7-asynchronous-tests
+```
