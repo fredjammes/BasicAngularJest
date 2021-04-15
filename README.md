@@ -154,4 +154,63 @@ For the setup, we use the beforeEach function. In this function, we setup a simp
 
 By doing so, before every 'it' or 'test' function, we will do this testing module setup and compiling action, allowing us to have a fresh component before each test.
 
-You can now go to the next section : git checkout 6-simple-tests
+### Simple tests
+#### The simple tests component
+Let's create a simple component, called SimpleTestsComponent.
+SimpleTestsComponent will display a simple title, and a button changing it.
+
+We will remove everything in the AppComponent in order to only include our new component.
+The template of AppComponent now just contains the following : 
+```html
+<baj-simple-tests></baj-simple-tests>
+```
+When doing so, we must remove the tests relative to it. Since we added SimpleTestComponent into AppComponent, it needs to be added to the declarations of the module inside the method TestBed.configureTestingModule, so our tests works again :
+```typescript
+await TestBed.configureTestingModule({
+    declarations: [
+        AppComponent,
+        SimpleTestsComponent
+    ],
+}).compileComponents();
+```
+
+#### The tests for this simple tests component
+Now we create a test suite using describe in the spec file of our new component.
+This test suite include 2 setups, in 2 differents beforeEach.
+The first beforeEach helps us setting up a module for our tests :
+```typescript
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ SimpleTestsComponent ]
+    })
+    .compileComponents();
+  });
+```
+The second beforeEach create our component and start a change detection cycle :
+```typescript
+  beforeEach(() => {
+    fixture = TestBed.createComponent(SimpleTestsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+```
+Then, we will create a first test, to check that our component is correctly created : 
+```typescript
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+```
+We create a second test where we are simply checking the title is well set for our component :
+```typescript
+  it('should display \'A simple title\'', () => {
+    expect(component.title).toBe('A simple title');
+  });
+```
+Finally, we will create a test validation the title is correctly changed when we call the function the button is bound to :
+```typescript
+  it('should display \'Another simple title\' when button is clicked', () => {
+    component.changeTitle();
+    expect(component.title).toBe('Another simple title');
+  })
+```
+Make tests for everything that is public in your component like the method called when clicking the button. We could use the same kind of tests that were used in the generated tests using html to get the button to click on it to call the changeTitle method, but it tightly couples tests to the html, and the html could change while the functionality shouldn't.
