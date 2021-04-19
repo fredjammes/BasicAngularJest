@@ -214,3 +214,76 @@ Finally, we will create a test validation the title is correctly changed when we
   })
 ```
 Make tests for everything that is public in your component like the method called when clicking the button. We could use the same kind of tests that were used in the generated tests using html to get the button to click on it to call the changeTitle method, but it tightly couples tests to the html, and the html could change while the functionality shouldn't.
+
+#### test.each : how to regroup multiple test cases
+As of now, we made some very simple tests with a single test case each time.
+With the following, we will see a use case where we have to test multiple cases within the same test.
+
+##### The component
+To begin with, we will add to our component 2 buttons that toggles 2 components booleans, isFirstSwitchOn and isSecondSwitchOn. We add a getter, isReadyToGo, to check when both switch are on in which case we should write 'Ready to go !', otherwise the text 'Waiting for all switch to be on...' should be displayed.
+
+##### The tests
+Jest gives us a method, test.each, existing in 2 forms :
+- One using an array
+- One using a template literal string
+
+For the array version, we define our test cases using the following :
+```typescript
+test.each<[boolean, boolean, boolean]>([
+        [true, true, true],
+        [false, true, false],
+        [true, false, false],
+        [false, false, false]
+    ])(...)
+```
+We pass an array of tuples of 3 boolean as parameter of the function test.each, each tuple is one test case.
+
+This function return a function, which works as the regular test or it function :
+```typescript
+test.each<[boolean, boolean, boolean]>(...)(
+        'Array : When isFirstSwitchOn is %p and isSecondSwitch is %p, expectedIsReadyToGo should be %p',
+        (isFirstSwitchOn: boolean, isSecondSwitch: boolean, expectedIsReadyToGo: boolean) => {
+            component.isFirstSwitchOn = isFirstSwitchOn;
+            component.isSecondSwitchOn = isSecondSwitch;
+            expect(component.isReadyToGo).toBe(expectedIsReadyToGo);
+        }
+    );
+```
+Here, the first parameter is the name of the test. It follows the printf formating so we can print the value of each element of the tuple for the current test case.
+
+The second parameter is our usual test callback function, but this time, parameters of the callback function are elements of the current test case tuple.
+
+For the template literal string version, we do not type the test.each function and the test cases are in a template literal string instead of being parameter of the function
+```typescript
+test.each`
+    isFirstSwitchOn | isSecondSwitch  | expectedIsReadyToGo
+    ${true}         | ${true}         | ${true}
+    ${false}        | ${true}         | ${false}
+    ${true}         | ${false}        | ${false}
+    ${false}        | ${false}        | ${false}
+    `(...)
+```
+The string includes a header allowing us to use it later.
+```typescript
+test.each`...`(
+        `Template Literal : When isFirstSwitchOn is $isFirstSwitchOn and isSecondSwitch is $isSecondSwitch, expectedIsReadyToGo should be $expectedIsReadyToGo`,
+        (
+            { isFirstSwitchOn, isSecondSwitch, expectedIsReadyToGo }:
+                { isFirstSwitchOn: boolean, isSecondSwitch: boolean, expectedIsReadyToGo: boolean }
+        ) => {
+            component.isFirstSwitchOn = isFirstSwitchOn;
+            component.isSecondSwitchOn = isSecondSwitch;
+            expect(component.isReadyToGo).toBe(expectedIsReadyToGo);
+        }
+    );
+```
+The test.each\`...\`() function has 2 parameters, as usual.
+
+This time, instead of a printf formating, elements of the tuple can be used using the name defined in the header of the test cases prefixed with $ in the test name.
+
+The second parameter is a callback function, with one parameter : an object with each element of the tuples as its attributes.
+
+You can now go to the next section :
+```bash
+git checkout 7-asynchronous-tests
+```

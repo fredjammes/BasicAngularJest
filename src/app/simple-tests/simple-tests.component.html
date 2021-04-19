@@ -1,2 +1,14 @@
 <h1>{{ title }}</h1>
 <button (click)="changeTitle()">Change the title</button>
+
+<div>
+    <button (click)="toggleFirstSwitch()">Toggle First Switch</button>
+    <span>first switch state :</span><span class="light" [ngClass]="{ 'light-on': isFirstSwitchOn, 'light-off': !isFirstSwitchOn}"></span>
+</div>
+<div>
+    <button (click)="toggleSecondSwitch()">Toggle Second Switch</button>
+    <span>second switch state :</span><span class="light" [ngClass]="{ 'light-on': isSecondSwitchOn, 'light-off': !isSecondSwitchOn}"></span>
+</div>
+<div>
+    <span>{{ isReadyToGo ? 'Ready to go !' : 'Waiting for all switch to be on...'}}</span>
+</div>
