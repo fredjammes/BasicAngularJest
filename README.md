@@ -139,6 +139,7 @@ Setup and teardown of the tests can be done with the following functions :
 
 These all take a callback function, doing the setup or the teardown.
 These functions can be put directly on top of the file, or inside a describe function in order to be applied only in the scope of the test suite.
+
 ---
 
 ### Basic Angular example
@@ -154,7 +155,7 @@ For the setup, we use the beforeEach function. In this function, we setup a simp
 
 By doing so, before every 'it' or 'test' function, we will do this testing module setup and compiling action, allowing us to have a fresh component before each test.
 
-### Simple tests
+### 6. Simple tests
 #### The simple tests component
 Let's create a simple component, called SimpleTestsComponent.
 SimpleTestsComponent will display a simple title, and a button changing it.
@@ -283,7 +284,119 @@ This time, instead of a printf formating, elements of the tuple can be used usin
 
 The second parameter is a callback function, with one parameter : an object with each element of the tuples as its attributes.
 
-You can now go to the next section :
-```bash
-git checkout 7-asynchronous-tests
+## 7. Asynchronous tests
+When building Angular application, we more than often have to deal with asynchronous calls of our API.
+To do so, we usually define a service file including every calls we need.
+
+As we want to be able to test our component while isolating it from the real API call, we are going to use abstract classes which will be used in order to inject a stub version of our service in our test.
+
+For this example, we will create a simple component displaying a table, in which each line is going to display each element from an array received from our service. Then, we will test that the component correctly calls the service (actually a stub of it) and fills a component property with the received data.
+
+### The component and service
+The first thing we're going to do is creating an abstract class which will be used as an interface, GetAllPersons. We use abstract class because dependency injection cannot work with interface, more on this later.
+
+Here is the abstract class : 
+```typescript
+export abstract class GetAllPersons {
+    abstract getAll(): Observable<Person[]>;
+}
 ```
+It is very simple and only has one abstract method, allowing us to stub only this method when testing our component.
+
+On the component side, we will inject this abstract class the same way we do it for a regular Angular service, and in the ngOnInit() method, we subscribe it and fill with a property of the component, *people*, with the return of the call :
+```typescript
+@Component({
+    selector: 'baj-asynchronous-tests',
+    templateUrl: 'asynchronous-tests.component.html'
+})
+export class AsynchronousTestsComponent implements OnInit{
+    people: Person[] = [];
+
+    constructor(
+        private getAll: GetAllPeople
+    ) {}
+
+    ngOnInit() {
+        this.getAll.getAll().subscribe((people: Person[]) => {
+            this.people = people;
+        })
+    }
+}
+```
+
+Back to the service side, we have to implement the abstract class into a class. To do so, we will create a regular Angular service, PersonWebService.
+
+This service will be responsible to make the real http call as we usually do, using HttpClient.
+It will implement GetAllPeople, and, because of it, must implement the getAll method :
+
+```typescript
+@Injectable()
+export class PersonWebService implements GetAllPeople {
+    constructor(
+        private http: HttpClient
+    ) { }
+
+    getAll(): Observable<Person[]> {
+        return this.http.get<Person[]>('https://my-json-server.typicode.com/fredjammes/angular-formation-api/trainees');
+    }
+
+}
+```
+
+If you're familiar with Angular, you must think, and you'll be right, that Angular will tell us the error "NullInjectorError: No provider for GetAllPeople!".
+We must tell Angular that he has a GetAllPeople service : 
+```typescript
+@NgModule({
+    ...
+    providers: [
+        { provide: GetAllPeople, useClass: PersonWebService }
+    ],
+    ...
+})
+export class AppModule { }
+```
+In our module, we define a new provider, in the *providers* section. This provider "provide" GetAllPeople, and "useClass" PersonWebService.
+It means that when we inject GetAllPeople, what actually use PersonWebService.
+
+### The tests
+For the test part, we want to test the component, but without the real HTTP call.
+
+To do so, we have to define our provider in our testing module :
+```typescript
+beforeEach(async () => {
+    await TestBed.configureTestingModule({
+        declarations: [AsynchronousTestsComponent],
+        providers: [
+            {
+                provide: GetAllPeople,
+                useFactory: (): GetAllPeople => ({
+                    getAll(): Observable<Person[]> {
+                        return of(expectedPersons).pipe(delay(10));
+                    }
+                })
+            }
+        ]
+
+    }).compileComponents();
+});
+```
+It works the same way as in a real module, but this time, when we provide the GetAllPeople abstract class, we use *useFactory* to give a function returning an object with the getAll method stub implementation.
+
+The tests itself is the following : 
+```typescript
+    it('should fill the persons array', fakeAsync(
+        () => {
+            fixture.detectChanges();
+            tick(11);
+            expect(component.people).toStrictEqual(expectedPersons);
+        })
+    );
+```
+The first thing is the fixture.detectChanges(). It says Angular to enter a change detection cycle, which launch the ngOnInit method.
+When using Angular life cycle hooks, we want to make sure Angular runs it to test our component.
+We don't want to manually call ngOnInit, because it would represent that the method is called twice, which won't happen in a real scenario.
+
+the second part is the callback function of the function *it*.
+Instead of using a simple arrow function, we're going to use fakeAsync, which allows us to virtually control time.
+
+To do so, we can now use the tick method to simulate some time has passed. Here, we simulate a delay for our getAll method of 10ms, and in our test, we simulate 11ms to have passed before checking the value of the property people of the component.

@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
   selector: 'baj-root',
   template: `
     <baj-simple-tests></baj-simple-tests>
+    <baj-asynchronous-tests></baj-asynchronous-tests>
   `,
   styles: []
 })
